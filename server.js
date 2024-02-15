@@ -53,36 +53,49 @@ const server = http.createServer((req, res) => {
 
     // GET /dogs
     if (req.method === 'GET' && req.url === '/dogs') {
-      // Your code here 
-
-      return res.end();
+      // Your code here
+      res.writeHead(200, {"Content-Type": "application/json"})
+      // res.setHeader("Content-Type", "application/json")
+      // res.statusCode = 200
+      return res.end(JSON.stringify(dogs));
     }
 
     // GET /dogs/:dogId
     if (req.method === 'GET' && req.url.startsWith('/dogs/')) {
       const urlParts = req.url.split('/'); // ['', 'dogs', '1']
+      let dog;
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
-        // Your code here 
+        dog = dogs.find( dog => dog.dogId === +dogId)
+        res.writeHead(200, {"Content-Type": "application/json"})
       }
-      return res.end();
+      return res.end(JSON.stringify(dog));
     }
 
     // POST /dogs
     if (req.method === 'POST' && req.url === '/dogs') {
       const { name, age } = req.body;
-      // Your code here 
-      return res.end();
+      let newDog = {
+        dogId: getNewDogId(),
+        name,
+        age
+      }
+      dogs.push(newDog)
+      res.writeHead(201, {"Content-Type": "application/json"})
+      return res.end(JSON.stringify(newDog));
     }
 
     // PUT or PATCH /dogs/:dogId
     if ((req.method === 'PUT' || req.method === 'PATCH')  && req.url.startsWith('/dogs/')) {
       const urlParts = req.url.split('/');
+      let dog;
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
-        // Your code here 
+        dog =  dogs.find( dog => dog.dogId === +dogId)
       }
-      return res.end();
+      
+      res.writeHead(201, {"Content-Type": "application/json"})
+      return res.end(JSON.stringify(dog));
     }
 
     // DELETE /dogs/:dogId
@@ -90,7 +103,7 @@ const server = http.createServer((req, res) => {
       const urlParts = req.url.split('/');
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
-        // Your code here 
+        // Your code here
       }
       return res.end();
     }
