@@ -85,27 +85,38 @@ const server = http.createServer((req, res) => {
       return res.end(JSON.stringify(newDog));
     }
 
-    // PUT or PATCH /dogs/:dogId
+    // PUT or PATCH /dogs/:dogId/
     if ((req.method === 'PUT' || req.method === 'PATCH')  && req.url.startsWith('/dogs/')) {
       const urlParts = req.url.split('/');
       let dog;
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
+        const { name, age } = req.body
         dog =  dogs.find( dog => dog.dogId === +dogId)
+
+        if(name){
+          dog.name = name
+        }
+        if(age){
+          dog.age = age
+        }
+        res.writeHead(200, {"Content-Type": "application/json"})
       }
-      
-      res.writeHead(201, {"Content-Type": "application/json"})
+
       return res.end(JSON.stringify(dog));
     }
 
     // DELETE /dogs/:dogId
     if (req.method === 'DELETE' && req.url.startsWith('/dogs/')) {
       const urlParts = req.url.split('/');
+      let dogIndex;
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
-        // Your code here
+        dogIndex = dogs.findIndex(dog => dog.dogId === dogId)
+        dogIndex > 0 && dogs.splice(dogIndex, 1)
+        res.writeHead(200, {"Content-Type": "application/json"})
       }
-      return res.end();
+      return res.end('{"message": "Successfully deleted"}');
     }
 
     // No matching endpoint
